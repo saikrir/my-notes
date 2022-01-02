@@ -3,6 +3,8 @@ server:
     context-path: /v1/notes-service
 
 spring:
+  profiles:
+    active: dev
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     show-sql: true
