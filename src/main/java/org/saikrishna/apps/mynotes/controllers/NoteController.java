@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/categories/{categoryId}/note-entries")
+@RequestMapping()
 public class NoteController {
 
     @Autowired
@@ -24,14 +24,14 @@ public class NoteController {
     @Autowired
     NoteService noteService;
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, value = "/categories/{categoryId}/note-entries")
     public ResponseEntity<NoteEntryResource> newResource(@Min(1) @PathVariable("categoryId") Long categoryId, @Valid @RequestBody NoteEntryResource noteEntryResource) {
         noteEntryResource.setEntryDate(LocalDateTime.now());
         categoryService.addNoteEntry(categoryId, noteEntryResource);
         return ResponseEntity.created(URI.create("/" + categoryId)).build();
     }
 
-    @PutMapping(value = "/{noteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/categories/{categoryId}/note-entries/{noteId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NoteEntryResource> modifyNoteEntry(@Min(1) @PathVariable("categoryId") Long categoryId,
                                                              @Min(1) @PathVariable("noteId") Long noteId,
                                                              @Valid @RequestBody NoteEntryResource noteEntryResource) {
@@ -40,8 +40,13 @@ public class NoteController {
         return ResponseEntity.accepted().body(noteService.modifyNoteEntry(categoryId, noteEntryResource));
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/categories/{categoryId}/note-entries")
     public ResponseEntity<Set<NoteEntryResource>> getAllEntriesInCategory(@Min(1) @PathVariable("categoryId") Long categoryId) {
         return ResponseEntity.ok().body(noteService.allEntriesInCategory(categoryId));
+    }
+
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE, value = "/categories/note-entries")
+    public ResponseEntity<Set<NoteEntryResource>> allNotes() {
+        return ResponseEntity.ok().body(noteService.allNotes());
     }
 }

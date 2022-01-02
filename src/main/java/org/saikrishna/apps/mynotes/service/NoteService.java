@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,11 @@ public class NoteService {
 
     public Set<NoteEntryResource> allEntriesInCategory(Long categoryId) {
         Set<NoteEntry> noteEntries = notesRepository.noteEntriesInCategoryId(categoryId);
+        return noteEntries.stream().map(modelMapper::toNoteEntryResource).collect(Collectors.toSet());
+    }
+
+    public Set<NoteEntryResource> allNotes() {
+        List<NoteEntry> noteEntries = notesRepository.findAll();
         return noteEntries.stream().map(modelMapper::toNoteEntryResource).collect(Collectors.toSet());
     }
 
